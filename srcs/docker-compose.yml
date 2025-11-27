@@ -1,7 +1,7 @@
 services:
   nginx:
     build:
-      context: ./srcs/requirements/nginx
+      context: ./requirements/nginx
       dockerfile: Dockerfile
     container_name: nginx
     ports:
@@ -16,7 +16,7 @@ services:
 
   wordpress:
     build:
-      context: ./srcs/requirements/wordpress
+      context: ./requirements/wordpress
       dockerfile: Dockerfile
     container_name: wordpress
     volumes:
@@ -28,7 +28,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    # Explicitly listed variables used in install.sh
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -44,7 +43,7 @@ services:
 
   mariadb:
     build:
-      context: ./srcs/requirements/mariadb
+      context: ./requirements/mariadb
       dockerfile: Dockerfile
     container_name: mariadb
     volumes:
@@ -61,16 +60,14 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      # UPDATED: Matches Makefile DATA_PATH
-      device: /home/saad/data/wordpress
+      device: /home/sfellahi/data/wordpress
 
   mariadb:
     driver: local
     driver_opts:
       type: none
       o: bind
-      # UPDATED: Matches Makefile DATA_PATH
-      device: /home/saad/data/mariadb
+      device: /home/sfellahi/data/mariadb
 
 networks:
   inception:

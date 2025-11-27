@@ -1,20 +1,20 @@
 NAME = inception
-# Path for data volumes - Make sure your .env file matches this path!
-DATA_PATH = /home/saad/data
+DATA_PATH = /home/sfellahi/data
 
 all: dirs build up
 
 dirs:
-	mkdir -p $(DATA_PATH)/mariadb
-	mkdir -p $(DATA_PATH)/wordpress
+	sudo mkdir -p $(DATA_PATH)/mariadb
+	sudo mkdir -p $(DATA_PATH)/wordpress
 
 build: dirs
-	docker compose -f docker-compose.yml build
+	docker compose -f srcs/docker-compose.yml build
 
 up: dirs
-	docker compose -f docker-compose.yml up 
+	docker compose -f srcs/docker-compose.yml up -d
+
 down:
-	docker compose -f docker-compose.yml down
+	docker compose -f srcs/docker-compose.yml down
 
 clean: down
 	docker system prune -af
@@ -23,8 +23,7 @@ clean: down
 fclean: clean
 	docker rmi $$(docker images -q) 2>/dev/null || true
 	docker volume rm $$(docker volume ls -q) 2>/dev/null || true
-	# Optional: Remove data directories (Be careful with this!)
-	# sudo rm -rf $(DATA_PATH)
+	sudo rm -rf $(DATA_PATH)
 
 re: fclean all
 
