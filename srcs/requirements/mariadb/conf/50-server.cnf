@@ -1,0 +1,14 @@
+[mysqld]
+bind-address = 0.0.0.0
+port = 3306
+datadir = /var/lib/mysql
+
+# Logging
+log_error = /var/lib/mysql/error.log
+
+# InnoDB settings
+innodb_buffer_pool_size = 128M
+innodb_log_file_size = 32M
+
+# Security
+skip-networking = 0
