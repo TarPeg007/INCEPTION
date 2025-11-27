@@ -1,3 +1,4 @@
+# FIX: Change oldstable to bookworm
 FROM debian:bookworm
 
 RUN apt-get update && apt-get install -y \
@@ -14,7 +15,6 @@ RUN apt-get update && apt-get install -y \
     mariadb-client \
     && rm -rf /var/lib/apt/lists/*
 
-# PHP-FPM 8.2 socket directory
 RUN mkdir -p /run/php
 
 WORKDIR /var/www/html
@@ -27,7 +27,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-# RESTORED: Copy the config file from your local folder
+# Ensure you have the www.conf file in your conf folder!
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 COPY install.sh /usr/local/bin/install.sh

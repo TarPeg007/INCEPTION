@@ -1,14 +1,19 @@
-FROM alpine:3.17
+FROM debian:bookworm
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache nginx openssl && \
-    mkdir -p /var/run/nginx /etc/nginx/ssl
+# Install Nginx and OpenSSL
+RUN apt-get update && apt-get install -y nginx openssl && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY conf/nginx.conf /etc/nginx/http.d/default.conf
+# Create SSL directory
+RUN mkdir -p /etc/nginx/ssl
+
+# Copy configuration and tools
+COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
 COPY tools/ssl.sh /usr/local/bin/ssl.sh
 
+# Make the SSL script executable and run it
 RUN chmod +x /usr/local/bin/ssl.sh && \
     /usr/local/bin/ssl.sh
 
-
+# Nginx on Debian runs in the foreground with this command
 CMD ["nginx", "-g", "daemon off;"]
