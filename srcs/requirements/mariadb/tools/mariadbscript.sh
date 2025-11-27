@@ -30,9 +30,9 @@ GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-# 5. Stop Temp Server & Start Real Server
+# 5. Stop Temp Server & Start Real Server oep
 mysqladmin -u root shutdown
 wait "$PID"
 
 echo "Starting MariaDB Server..."
-exec mariadbd --user=mysql --bind-address=0.0.0.0
+exec mariadbd --user=mysql --bind-address=0.0.0.0 
