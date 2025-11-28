@@ -1,5 +1,6 @@
 services:
   nginx:
+    image: nginx:tag1
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
@@ -12,9 +13,10 @@ services:
       - inception
     depends_on:
       - wordpress
-    restart: unless-stopped
+    restart: on-failure
 
   wordpress:
+    image: wordpress:tag1
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
@@ -25,23 +27,12 @@ services:
       - inception
     depends_on:
       - mariadb
-    restart: unless-stopped
+    restart: on-failure
     env_file:
       - .env
-    environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - DOMAIN_NAME=${DOMAIN_NAME}
-      - WP_TITLE=${WP_TITLE}
-      - WP_ADMIN_USER=${WP_ADMIN_USER}
-      - WP_ADMIN_PASSWORD=${WP_ADMIN_PASSWORD}
-      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
-      - WP_USER=${WP_USER}
-      - WP_PASSWORD=${WP_USER_PASSWORD}
-      - WP_EMAIL=${WP_USER_EMAIL}
 
   mariadb:
+    image: mariadb:tag1
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
@@ -50,7 +41,7 @@ services:
       - mariadb:/var/lib/mysql
     networks:
       - inception
-    restart: unless-stopped
+    restart: on-failure
     env_file:
       - .env
 
@@ -71,4 +62,5 @@ volumes:
 
 networks:
   inception:
+    name: inception
     driver: bridge

@@ -1,38 +1,18 @@
 #!/bin/bash
 
-# 1. Fix Permissions
-mkdir -p /run/mysqld
-chown -R mysql:mysql /run/mysqld
-chown -R mysql:mysql /var/lib/mysql
+if [ ! -d "/var/lib/mysql/$MYSQL_DATABASE" ]; then
+    echo "Initializing MariaDB..."
+    service mariadb start
+    sleep 5
 
-# 2. Initialize Data (if missing)
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    echo "Initializing MariaDB data..."
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql --skip-test-db > /dev/null
-fi
-
-# 3. Start Temp Server
-echo "Starting temporary server..."
-mariadbd --user=mysql --datadir=/var/lib/mysql --skip-networking &
-PID="$!"
-
-until mysqladmin ping >/dev/null 2>&1; do
-    sleep 1
-done
-
-# 4. Create Users
-echo "Updating SQL users..."
-mariadb <<EOF
-FLUSH PRIVILEGES;
+    mysql -u root <<EOF
 CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
 CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
 GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-# 5. Stop Temp Server & Start Real Server oep
-mysqladmin -u root shutdown
-wait "$PID"
+    service mariadb stop
+fi
 
-echo "Starting MariaDB Server..."
-exec mariadbd --user=mysql --bind-address=0.0.0.0 
+exec mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql
