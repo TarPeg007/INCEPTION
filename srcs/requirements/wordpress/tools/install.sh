@@ -27,7 +27,6 @@ if ! wp core is-installed --allow-root; then
         --skip-email \
         --allow-root
 
-    echo "Creating additional user: $WP_USER"
 
     wp user create $WP_USER $WP_USER_EMAIL --user_pass=$WP_USER_PASSWORD --allow-root
 
